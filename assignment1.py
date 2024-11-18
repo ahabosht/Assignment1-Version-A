@@ -4,6 +4,7 @@
 OPS445 Assignment 1 - Fall 2024
 Program: assignment1.py 
 Author: "Ahmad Habosht"
+Seneca User: "ahabosht"
 The python code in this file (assignment1.py) is original work written by
 "Ahmad Habosht". No code in this file is copied from any other source
 except those provided by the course instructor, including any person,
