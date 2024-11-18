@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 '''
-OPS435 Assignment 1 - Summer 2023
+OPS445 Assignment 1 - Fall 2024
 Program: assignment1.py 
-Author: "Student Name"
-The python code in this file (a1_[Student_id].py) is original work written by
-"Student Name". No code in this file is copied from any other source
+Author: "Ahmad Habosht"
+The python code in this file (assignment1.py) is original work written by
+"Ahmad Habosht". No code in this file is copied from any other source
 except those provided by the course instructor, including any person,
 textbook, or on-line resource. I have not shared this python script
 with anyone or anything except for submission for grading. I understand
@@ -24,10 +24,19 @@ def day_of_week(year: int, month: int, date: int) -> str:
     num = (year + year//4 - year//100 + year//400 + offset[month] + date) % 7
     return days[num]
 
-
-def mon_max(month:int, year:int) -> int:
+def mon_max(month, year):
     "returns the maximum day for a given month. Includes leap year check"
-    ...
+    if month == 1 or month == 3 or month == 5 or month == 7 or month == 8 or month == 10 or month == 12: 
+        return 31
+    elif month == 4 or month == 6 or month == 9 or month == 11:
+        return 30
+    elif month == 2:
+        if leap_year(year):
+            return 29
+        else:
+            return 28
+    else:
+        raise ValueError("Invalid month value") #raise an error if the month is invalid
 
 def after(date: str) -> str:
     '''
@@ -60,23 +69,70 @@ def after(date: str) -> str:
 
     return next_date
 
-
 def usage():
     "Print a usage message to the user"
-    ...
+    print("Usage: assignment1.py YYYY-MM-DD YYYY-MM-DD") #print the way the date format should be.
+    sys.exit(1) #exit if the arguments are wrong
 
-
-def leap_year(year: int) -> bool:
+def leap_year(year):
     "return True if the year is a leap year"
-    ...
+    if year % 4 == 0:
+        if year % 100 != 0 or year % 400 == 0:
+            return True
+    return False
 
-def valid_date(date: str) -> bool:
+
+def valid_date(date):
     "check validity of date and return True if valid"
-    ...
+    try:
+        parts = date.split("-") #split the date into separate parts
+        if len(parts) != 3: #check if the format is correct
+            return False
 
-def day_count(start_date: str, stop_date: str) -> int:
+        year, month, day = parts 
+
+        year = int(year)
+        month = int(month)
+        day = int(day)
+
+        if len(str(year)) != 4: #check that the year is 4 digits
+            return False
+
+        if month < 1 or month > 12:
+            return False
+
+        max_days = mon_max(month, year) #check the max days in this month
+        if day < 1 or day > max_days:
+            return False
+
+        return True
+
+    except ValueError:
+        return False
+
+def day_count(start_date, stop_date):
     "Loops through range of dates, and returns number of weekend days"
-    ...
+    start, stop = sorted([start_date, stop_date]) #Sort start and stop in the right order.
+    weekend_days = 0 #weekend_days counter start from Zero
 
-if __name__ == "__main__":
-    ...
+    while start <= stop:
+        year, month, day = map(int, start.split('-')) #split the date and convert each part into integer.
+        if day_of_week(year, month, day) == 'sat' or day_of_week(year, month, day) == 'sun':
+            weekend_days += 1 #increment by 1
+        start = after(start) #call the after() function to get the next day
+
+    return weekend_days
+
+if __name__ == "__main__": #main block
+    if len(sys.argv) != 3: #check if the right number of arguments are provided
+        usage() #call usage() function to show usage message if the provided arguments are wrong
+
+    start_date = sys.argv[1] #obtain start date from arguments
+    stop_date = sys.argv[2] #obtain stop date from arguments
+
+    if valid_date(start_date) == False or valid_date(stop_date) == False: #check if the dates are valid
+        usage() #if not, call usage() function to show usage message
+
+    weekend_days = day_count(start_date, stop_date) #calculate the number of weekend days
+    start, stop = sorted([start_date, stop_date]) #sort the dates in order
+    print(f"The period between {start} and {stop} includes {weekend_days} weekend days.") #print the result
